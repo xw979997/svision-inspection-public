@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>SVISION 智能检测机 · 预览</title>
+<style>
+*{box-sizing:border-box;font-family:'Microsoft YaHei UI','Segoe UI',sans-serif}
+body{margin:0;background:#0F1216;color:#E6E6E6;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.bar{height:56px;background:#12161B;display:flex;align-items:center;padding:0 16px;gap:16px}
+.bar .logo{width:26px;height:26px;border:2px solid #8A93A0;border-radius:50%}
+.bar .ttl{font-size:18px;font-weight:bold;margin-right:16px}
+.bar .muted{color:#9AA0A6}.grow{flex:1}
+.menu{color:#D6DBE0;padding:6px 10px;border-radius:4px;cursor:pointer}.menu:hover{background:#1E2530}
+.slogan{color:#5BB318;font-weight:bold}
+.cams{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:8px;padding:8px}
+.cam{position:relative;background:#000;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#333}
+.tag{position:absolute;top:8px;right:8px;background:#5BB318;color:#fff;font-size:12px;padding:2px 8px;border-radius:3px}
+.bottom{height:300px;display:flex;padding:10px;gap:10px}
+.left{flex:3;display:flex;flex-direction:column}
+.right{flex:2;display:flex;flex-direction:column}
+.sec{color:#5BB318;font-weight:bold;margin:2px 0 8px 4px}
+.stats{display:flex;align-items:center;gap:10px}
+.card{background:#161B22;border-radius:6px;padding:14px 18px;flex:1;min-width:0}
+.card .k{color:#9AA0A6;font-size:13px}.card .v{font-size:30px;font-weight:bold;text-align:center;margin-top:6px}
+.circ{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3FBF6B,#1E9E55);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+.circ .r{font-size:24px;font-weight:bold}
+.simbtn{background:#2D6CDF;color:#fff;border:0;padding:6px 14px;border-radius:4px;cursor:pointer;margin-bottom:8px}
+.log{flex:1;background:#0B0E12;border-radius:4px;margin-top:10px;padding:8px;font-size:12px;color:#B7BEC6;overflow:auto;white-space:pre-wrap}
+select{height:40px;font-size:18px;width:100%;background:#161B22;color:#fff;border:1px solid #2a3340;border-radius:4px;padding:0 8px}
+.chks{display:flex;gap:16px;margin:10px 0 0 4px;color:#D6DBE0;font-size:14px}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.act{height:90px;background:#161B22;border:0;color:#E6E6E6;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
+.act:hover{background:#222B36}.act.rst{background:#1E5F66}
+</style></head><body>
+<div class="bar"><div class="logo"></div><div class="ttl">SVISION 智能检测机</div>
+<span class="muted">用户名：</span><span>111</span><span class="muted">用户权限：</span><span>系统管理员</span>
+<div class="grow"></div>
+<div class="menu" onclick="log('打开: 数据审计')">数据审计</div><div class="menu" onclick="log('打开: 用户管理')">用户管理</div>
+<div class="menu" onclick="log('退出登录')">退出登录</div><div class="menu" onclick="log('退出系统')">退出系统</div>
+<div class="slogan">精准 | 高效 | 信得过！</div></div>
+<div class="cams">
+<div class="cam">CAM<div class="tag">cam1</div></div><div class="cam">CAM<div class="tag">cam2</div></div><div class="cam">CAM<div class="tag">cam3</div></div>
+<div class="cam">CAM<div class="tag">cam4</div></div><div class="cam">CAM<div class="tag">cam5</div></div><div class="cam">CAM<div class="tag">cam6</div></div></div>
+<div class="bottom">
+<div class="left"><div class="sec">数据统计区</div>
+<div class="stats">
+<div class="card"><div class="k">生产数量</div><div class="v" id="prod">0</div></div>
+<div class="card"><div class="k">通过数量</div><div class="v" id="pass" style="color:#52C41A">0</div></div>
+<div class="card"><div class="k">错误数量</div><div class="v" id="err" style="color:#FF4D4F">0</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;margin-left:16px">
+<button class="simbtn" onclick="inspect()">模拟一次</button>
+<div class="circ"><div class="r" id="rate">0.000</div><div>合格率</div></div></div>
+</div>
+<div class="log" id="log"></div></div>
+<div class="right"><div class="sec">操作区</div>
+<select><option>5ml</option><option>10ml</option><option selected>30ml</option><option>50ml</option><option>100ml</option></select>
+<div class="chks"><label><input type="checkbox">关闭删除</label><label><input type="checkbox">关闭错误存图</label><label><input type="checkbox" checked>存储OK图像</label></div>
+<div class="acts">
+<button class="act" onclick="load()">加 载</button>
+<button class="act" onclick="start()">启 动</button>
+<button class="act rst" onclick="reset()">复 位</button>
+<button class="act" onclick="log('最小化')">最小化</button>
+</div></div></div>
+<script>
+var prod=0,pass=0,err=0,tm=null;
+function t(){var d=new Date();return d.toLocaleTimeString('zh-CN',{hour12:false})+'.'+String(d.getMilliseconds()).padStart(3,'0')}
+function log(m){var l=document.getElementById('log');l.textContent+='['+t()+'] '+m+'\n';l.scrollTop=l.scrollHeight}
+function upd(){document.getElementById('prod').textContent=prod;document.getElementById('pass').textContent=pass;document.getElementById('err').textContent=err;document.getElementById('rate').textContent=(prod?pass/prod*100:0).toFixed(3)}
+function inspect(){prod++;var ok=Math.random()>0.15;ok?pass++:err++;log('第 '+prod+' 件: '+(ok?'合格 (OK)':'不合格 (NG)'));upd()}
+function start(){if(tm){clearInterval(tm);tm=null;log('已停止连续检测')}else{tm=setInterval(inspect,800);log('已启动连续检测')}}
+function reset(){prod=pass=err=0;upd();log('复位完成')}
+function load(){log('加载规格: 30ml')}
+log('获取本地IP地址: 192.168.10.182');log('服务器开启成功');upd();
+</script></body></html>
